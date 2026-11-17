@@ -73,9 +73,9 @@ class BudgetCategory {
 
 class BudgetTransaction {
   String id;
-  String type; // 'expense' or 'income'
+  String type;
   double amount;
-  String date; // YYYY-MM-DD
+  String date;
   String note;
   String? categoryId;
   int createdAt;
@@ -158,16 +158,16 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   static const String storageKey = 'pocketledger_native_v1';
 
   static const List<int> paletteColors = [
-    0xFF10B981, // Emerald
-    0xFF3B82F6, // Blue
-    0xFFF59E0B, // Amber
-    0xFF8B5CF6, // Purple
-    0xFFEC4899, // Pink
-    0xFF06B6D4, // Cyan
-    0xFFEF4444, // Red
-    0xFF84CC16, // Lime
-    0xFFF97316, // Orange
-    0xFF64748B, // Slate
+    0xFF10B981,
+    0xFF3B82F6,
+    0xFFF59E0B,
+    0xFF8B5CF6,
+    0xFFEC4899,
+    0xFF06B6D4,
+    0xFFEF4444,
+    0xFF84CC16,
+    0xFFF97316,
+    0xFF64748B,
   ];
 
   int _currentTabIndex = 0;
@@ -178,12 +178,10 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   List<BudgetTransaction> _transactions = [];
   List<RecurringTemplate> _recurring = [];
 
-  // Search and Filter state for History tab
   String _searchQuery = '';
   String _filterType = 'all';
   final TextEditingController _searchController = TextEditingController();
 
-  // Category Form state for Budgets tab
   String? _editingCategoryId;
   final TextEditingController _catNameController = TextEditingController();
   final TextEditingController _catLimitController = TextEditingController();
@@ -527,7 +525,6 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    // Expense / Income Toggle
                     Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFF0F172A),
@@ -625,4 +622,9 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                                 context: modalCtx,
                                 initialDate: initial,
                                 firstDate: DateTime(2020),
-                            
+                                lastDate: DateTime(2035),
+                              );
+                              if (picked != null) {
+                                setModalState(() {
+                                  selectedDate =
+                                      '${pick
