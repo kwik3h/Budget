@@ -45,6 +45,7 @@ jobs:
           mkdir -p /tmp/pocketledger_app
           cd /tmp/pocketledger_app
           flutter create --org com.kwik3h --project-name pocketledger --platforms android .
+          flutter pub add shared_preferences
           sed -i 's/android:label="pocketledger"/android:label="PocketLedger"/g' android/app/src/main/AndroidManifest.xml
           cp /tmp/user_main.dart lib/main.dart
           flutter build apk --release
@@ -56,4 +57,3 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: PocketLedger Android APK (Build #${{ github.run_number }})
           files: PocketLedger.apk
-          
