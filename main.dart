@@ -191,7 +191,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   void initState() {
     super.initState();
     final now = DateTime.now();
-    _activeYearMonth = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+    _activeYearMonth =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}';
     _loadData();
   }
 
@@ -205,13 +206,48 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
 
   List<BudgetCategory> _getDefaultCategories() {
     return [
-      BudgetCategory(id: 'cat_groceries', name: 'Groceries', limit: 800.0, colorValue: 0xFF10B981),
-      BudgetCategory(id: 'cat_bills', name: 'Utilities & Bills', limit: 450.0, colorValue: 0xFF3B82F6),
-      BudgetCategory(id: 'cat_transport', name: 'Fuel & Transport', limit: 300.0, colorValue: 0xFFF59E0B),
-      BudgetCategory(id: 'cat_kids', name: 'Family & Kids', limit: 400.0, colorValue: 0xFF8B5CF6),
-      BudgetCategory(id: 'cat_dining', name: 'Dining & Takeaway', limit: 200.0, colorValue: 0xFFEC4899),
-      BudgetCategory(id: 'cat_investing', name: 'Investing & Savings', limit: 500.0, colorValue: 0xFF06B6D4),
-      BudgetCategory(id: 'cat_misc', name: 'Discretionary / Misc', limit: 250.0, colorValue: 0xFF64748B),
+      BudgetCategory(
+        id: 'cat_groceries',
+        name: 'Groceries',
+        limit: 800.0,
+        colorValue: 0xFF10B981,
+      ),
+      BudgetCategory(
+        id: 'cat_bills',
+        name: 'Utilities & Bills',
+        limit: 450.0,
+        colorValue: 0xFF3B82F6,
+      ),
+      BudgetCategory(
+        id: 'cat_transport',
+        name: 'Fuel & Transport',
+        limit: 300.0,
+        colorValue: 0xFFF59E0B,
+      ),
+      BudgetCategory(
+        id: 'cat_kids',
+        name: 'Family & Kids',
+        limit: 400.0,
+        colorValue: 0xFF8B5CF6,
+      ),
+      BudgetCategory(
+        id: 'cat_dining',
+        name: 'Dining & Takeaway',
+        limit: 200.0,
+        colorValue: 0xFFEC4899,
+      ),
+      BudgetCategory(
+        id: 'cat_investing',
+        name: 'Investing & Savings',
+        limit: 500.0,
+        colorValue: 0xFF06B6D4,
+      ),
+      BudgetCategory(
+        id: 'cat_misc',
+        name: 'Discretionary / Misc',
+        limit: 250.0,
+        colorValue: 0xFF64748B,
+      ),
     ];
   }
 
@@ -236,10 +272,20 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       final List<dynamic> recList = decoded['recurring'] ?? [];
 
       setState(() {
-        _categories = catList.map((e) => BudgetCategory.fromJson(Map<String, dynamic>.from(e))).toList();
-        if (_categories.isEmpty) _categories = _getDefaultCategories();
-        _transactions = txList.map((e) => BudgetTransaction.fromJson(Map<String, dynamic>.from(e))).toList();
-        _recurring = recList.map((e) => RecurringTemplate.fromJson(Map<String, dynamic>.from(e))).toList();
+        _categories = catList
+            .map((e) => BudgetCategory.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        if (_categories.isEmpty) {
+          _categories = _getDefaultCategories();
+        }
+        _transactions = txList
+            .map((e) =>
+                BudgetTransaction.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        _recurring = recList
+            .map((e) =>
+                RecurringTemplate.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
         _isLoading = false;
       });
     } catch (e) {
@@ -261,7 +307,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     });
     await prefs.setString(storageKey, payload);
   }
-
+  
   String _formatCurrency(double value) {
     final bool isNeg = value < 0;
     final double absVal = value.abs();
@@ -279,8 +325,22 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     if (parts.length != 2) return ym;
     final int year = int.tryParse(parts[0]) ?? 2026;
     final int month = int.tryParse(parts[1]) ?? 1;
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${months[(month - 1).clamp(0, 11)]} $year';
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    final String mName = months[(month - 1).clamp(0, 11)];
+    return '$mName $year';
   }
 
   void _shiftMonth(int delta) {
@@ -289,7 +349,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
     final int month = int.tryParse(parts[1]) ?? 1;
     final DateTime shifted = DateTime(year, month + delta, 1);
     setState(() {
-      _activeYearMonth = '${shifted.year}-${shifted.month.toString().padLeft(2, '0')}';
+      _activeYearMonth =
+          '${shifted.year}-${shifted.month.toString().padLeft(2, '0')}';
     });
   }
 
@@ -299,7 +360,9 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   }
 
   List<BudgetTransaction> _getMonthTransactions() {
-    final list = _transactions.where((t) => t.date.startsWith(_activeYearMonth)).toList();
+    final list = _transactions
+        .where((t) => t.date.startsWith(_activeYearMonth))
+        .toList();
     list.sort((a, b) {
       final int cmp = b.date.compareTo(a.date);
       if (cmp != 0) return cmp;
@@ -309,36 +372,63 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
   }
 
   BudgetCategory _getCategoryById(String? id) {
-    if (id == null) return BudgetCategory(id: 'other', name: 'Other', limit: 0, colorValue: 0xFF64748B);
+    if (id == null) {
+      return BudgetCategory(
+        id: 'other',
+        name: 'Other',
+        limit: 0,
+        colorValue: 0xFF64748B,
+      );
+    }
     for (final c in _categories) {
       if (c.id == id) return c;
     }
-    return BudgetCategory(id: 'other', name: 'Other', limit: 0, colorValue: 0xFF64748B);
+    return BudgetCategory(
+      id: 'other',
+      name: 'Other',
+      limit: 0,
+      colorValue: 0xFF64748B,
+    );
   }
 
   void _showSnack(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
+      SnackBar(
+        content: Text(msg),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 
   void _applyRecurringToMonth() {
     if (_recurring.isEmpty) {
-      _showSnack('No recurring templates saved yet. Check "Repeat monthly" when adding a transaction.');
+      _showSnack(
+        'No recurring templates saved yet. Check "Repeat monthly" when adding a transaction.',
+      );
       return;
     }
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1E293B),
         title: const Text('Load Recurring Items'),
-        content: Text('Add ${_recurring.length} recurring transaction(s) into ${_formatYearMonthLabel(_activeYearMonth)}?'),
+        content: Text(
+          'Add ${_recurring.length} recurring transaction(s) into ${_formatYearMonthLabel(_activeYearMonth)}?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3B82F6), foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF3B82F6),
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
               Navigator.pop(ctx);
               final int nowMs = DateTime.now().millisecondsSinceEpoch;
@@ -346,15 +436,17 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
               setState(() {
                 for (int i = 0; i < _recurring.length; i++) {
                   final r = _recurring[i];
-                  _transactions.add(BudgetTransaction(
-                    id: 'tx_${nowMs}_$i',
-                    type: r.type,
-                    amount: r.amount,
-                    date: dateStr,
-                    note: r.note,
-                    categoryId: r.categoryId,
-                    createdAt: nowMs + i,
-                  ));
+                  _transactions.add(
+                    BudgetTransaction(
+                      id: 'tx_${nowMs}_$i',
+                      type: r.type,
+                      amount: r.amount,
+                      date: dateStr,
+                      note: r.note,
+                      categoryId: r.categoryId,
+                      createdAt: nowMs + i,
+                    ),
+                  );
                 }
               });
               _saveData();
@@ -366,11 +458,605 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       ),
     );
   }
+
+  void _openTransactionModal({
+    BudgetTransaction? existingTx,
+    String? preselectedCategoryId,
+  }) {
+    final bool isEditing = existingTx != null;
+    String txType = existingTx?.type ?? 'expense';
+    final TextEditingController amountCtrl = TextEditingController(
+      text: existingTx != null ? existingTx.amount.toStringAsFixed(2) : '',
+    );
+    final TextEditingController noteCtrl = TextEditingController(
+      text: existingTx?.note ?? '',
+    );
+
+    final String today = _todayString();
+    String selectedDate = existingTx?.date ??
+        (today.startsWith(_activeYearMonth) ? today : '$_activeYearMonth-01');
+
+    String selectedCategoryId = preselectedCategoryId ??
+        existingTx?.categoryId ??
+        (_categories.isNotEmpty ? _categories.first.id : '');
+    if (!_categories.any((c) => c.id == selectedCategoryId) &&
+        _categories.isNotEmpty) {
+      selectedCategoryId = _categories.first.id;
+    }
+
+    bool saveAsRecurring = false;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E293B),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (modalCtx, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 20,
+                bottom: MediaQuery.of(modalCtx).viewInsets.bottom + 24,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          isEditing ? 'Edit Transaction' : 'New Transaction',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(ctx),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0F172A),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFF334155)),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () =>
+                                  setModalState(() => txType = 'expense'),
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: txType == 'expense'
+                                      ? const Color(0xFFEF4444)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Expense',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: txType == 'expense'
+                                        ? Colors.white
+                                        : const Color(0xFF94A3B8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () =>
+                                  setModalState(() => txType = 'income'),
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: txType == 'income'
+                                      ? const Color(0xFF10B981)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Income',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: txType == 'income'
+                                        ? Colors.white
+                                        : const Color(0xFF94A3B8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: amountCtrl,
+                            autofocus: !isEditing,
+                            keyboardType:
+                                const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Amount (\$)',
+                              prefixText: '\$ ',
+                              filled: true,
+                              fillColor: const Color(0xFF0F172A),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              final DateTime initial =
+                                  DateTime.tryParse(selectedDate) ??
+                                      DateTime.now();
+                              final DateTime? picked = await showDatePicker(
+                                context: modalCtx,
+                                initialDate: initial,
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2035),
+                              );
+                              if (picked != null) {
+                                setModalState(() {
+                                  selectedDate =
+                                      '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+                                });
+                              }
+                            },
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                labelText: 'Date',
+                                filled: true,
+                                fillColor: const Color(0xFF0F172A),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(selectedDate),
+                                  const Icon(Icons.calendar_today, size: 16),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                                        const SizedBox(height: 14),
+                    if (txType == 'expense' && _categories.isNotEmpty) ...[
+                      InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'Category Envelope',
+                          filled: true,
+                          fillColor: const Color(0xFF0F172A),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedCategoryId,
+                            isExpanded: true,
+                            dropdownColor: const Color(0xFF1E293B),
+                            items: _categories.map((c) {
+                              return DropdownMenuItem<String>(
+                                value: c.id,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: Color(c.colorValue),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(c.name),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              if (val != null) {
+                                setModalState(() => selectedCategoryId = val);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                    ],
+                    TextField(
+                      controller: noteCtrl,
+                      decoration: InputDecoration(
+                        labelText: 'Description / Note',
+                        hintText: 'e.g., Weekly groceries, Fuel, Paycheck',
+                        filled: true,
+                        fillColor: const Color(0xFF0F172A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    if (!isEditing)
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: saveAsRecurring,
+                        activeColor: const Color(0xFF3B82F6),
+                        title: const Text(
+                          'Save as monthly recurring template',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (val) {
+                          setModalState(() => saveAsRecurring = val ?? false);
+                        },
+                      ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3B82F6),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        final double? amount =
+                            double.tryParse(amountCtrl.text.trim());
+                        final String note = noteCtrl.text.trim();
+                        if (amount == null || amount <= 0) {
+                          _showSnack('Please enter a valid amount.');
+                          return;
+                        }
+                        if (note.isEmpty) {
+                          _showSnack('Please enter a description.');
+                          return;
+                        }
+
+                        final int nowMs = DateTime.now().millisecondsSinceEpoch;
+                        setState(() {
+                          if (existingTx != null) {
+                            final idx = _transactions
+                                .indexWhere((t) => t.id == existingTx.id);
+                            if (idx != -1) {
+                              _transactions[idx] = BudgetTransaction(
+                                id: existingTx.id,
+                                type: txType,
+                                amount: amount,
+                                date: selectedDate,
+                                note: note,
+                                categoryId: txType == 'expense'
+                                    ? selectedCategoryId
+                                    : null,
+                                createdAt: existingTx.createdAt,
+                              );
+                            }
+                          } else {
+                            _transactions.add(
+                              BudgetTransaction(
+                                id: 'tx_$nowMs',
+                                type: txType,
+                                amount: amount,
+                                date: selectedDate,
+                                note: note,
+                                categoryId: txType == 'expense'
+                                    ? selectedCategoryId
+                                    : null,
+                                createdAt: nowMs,
+                              ),
+                            );
+
+                            if (saveAsRecurring) {
+                              _recurring.add(
+                                RecurringTemplate(
+                                  id: 'rec_$nowMs',
+                                  type: txType,
+                                  amount: amount,
+                                  note: note,
+                                  categoryId: txType == 'expense'
+                                      ? selectedCategoryId
+                                      : null,
+                                ),
+                              );
+                            }
+                          }
+                          _activeYearMonth = selectedDate.substring(0, 7);
+                        });
+
+                        _saveData();
+                        Navigator.pop(ctx);
+                        _showSnack(
+                          isEditing
+                              ? 'Transaction updated!'
+                              : 'Transaction saved!',
+                        );
+                      },
+                      child: Text(
+                        isEditing ? 'Update Transaction' : 'Save Transaction',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _confirmDeleteTransaction(BudgetTransaction tx) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: const Text('Delete Transaction'),
+        content: Text('Delete "${tx.note}" (${_formatCurrency(tx.amount)})?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              setState(() {
+                _transactions.removeWhere((t) => t.id == tx.id);
+              });
+              _saveData();
+              _showSnack('Transaction deleted.');
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildDashboardTab() {
+    final monthTxs = _getMonthTransactions();
+    final double totalIncome = monthTxs
+        .where((t) => t.type == 'income')
+        .fold(0.0, (sum, t) => sum + t.amount);
+    final double totalSpent = monthTxs
+        .where((t) => t.type == 'expense')
+        .fold(0.0, (sum, t) => sum + t.amount);
+    final double totalBudgeted =
+        _categories.fold(0.0, (sum, c) => sum + c.limit);
+    final double remainingBudget = totalBudgeted - totalSpent;
+    final double netCashFlow = totalIncome - totalSpent;
+    final double overallProgress = totalBudgeted > 0
+        ? (totalSpent / totalBudgeted).clamp(0.0, 1.0)
+        : 0.0;
+    final int overallPct =
+        totalBudgeted > 0 ? ((totalSpent / totalBudgeted) * 100).round() : 0;
+
+    Color overallBarColor = const Color(0xFF3B82F6);
+    if (totalSpent > totalBudgeted) {
+      overallBarColor = const Color(0xFFEF4444);
+    } else if (overallPct >= 85) {
+      overallBarColor = const Color(0xFFF59E0B);
+    }
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildSummaryCard(
+                label: 'MONTHLY INCOME',
+                value: _formatCurrency(totalIncome),
+                valueColor: const Color(0xFF10B981),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildSummaryCard(
+                label: 'MONTHLY SPENT',
+                value: _formatCurrency(totalSpent),
+                valueColor: const Color(0xFFEF4444),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E293B),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFF334155)),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'REMAINING BUDGET',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF94A3B8),
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatCurrency(remainingBudget),
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: remainingBudget >= 0
+                              ? Colors.white
+                              : const Color(0xFFEF4444),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'NET CASH FLOW',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF94A3B8),
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${netCashFlow >= 0 ? '+' : ''}${_formatCurrency(netCashFlow)}',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: netCashFlow >= 0
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFEF4444),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: overallProgress,
+                  minHeight: 10,
+                  backgroundColor: const Color(0xFF0F172A),
+                  valueColor: AlwaysStoppedAnimation<Color>(overallBarColor),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Budgeted: ${_formatCurrency(totalBudgeted)}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                  Text(
+                    '$overallPct% used',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Category Envelopes',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF334155),
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              ),
+              onPressed: _applyRecurringToMonth,
+              icon: const Icon(Icons.repeat, size: 16),
+              label: const Text(
+                'Load Recurring',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        ..._categories.map((cat) {
+          final double spent = monthTxs
+              .where((t) => t.type == 'expense' && t.categoryId == cat.id)
+              .fold(0.0, (sum, t) => sum + t.amount);
+          final double limit = cat.limit;
+          final double left = limit - spent;
+          final double rawRatio =
+              limit > 0 ? (spent / limit) : (spent > 0 ? 1.0 : 0.0);
+          final double progress = rawRatio.clamp(0.0, 1.0);
+          final int pct = (rawRatio * 100).round();
+
+          Color barColor = Color(cat.colorValue);
+          if (spent > limit) {
+            barColor = const Color(0xFFEF4444);
+          } else if (pct >= 85) {
+            barColor = const Color(0xFFF59E0B);
+          }
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: InkWell(
               borderRadius: BorderRadius.circular(14),
-              onTap: () => _openTransactionModal(preselectedCategoryId: cat.id),
+              onTap: () =>
+                  _openTransactionModal(preselectedCategoryId: cat.id),
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -417,7 +1103,8 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              TextSpan(text: ' / ${_formatCurrency(limit)}'),
+                              TextSpan(
+                                  text: ' / ${_formatCurrency(limit)}'),
                             ],
                           ),
                         ),
@@ -466,7 +1153,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       ],
     );
   }
-
+  
   Widget _buildSummaryCard({
     required String label,
     required String value,
@@ -691,6 +1378,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
       onSelected: (_) => setState(() => _filterType = value),
     );
   }
+
   Widget _buildCategoriesTab() {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
@@ -727,7 +1415,7 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+                            const SizedBox(height: 12),
               TextField(
                 controller: _catLimitController,
                 keyboardType:
@@ -1227,5 +1915,143 @@ class _BudgetHomeScreenState extends State<BudgetHomeScreen> {
                 _showSnack('Backup restored!');
               } catch (e) {
                 _showSnack('Invalid JSON backup format.');
-       
+              }
+            },
+            child: const Text('Restore'),
+          ),
+        ],
+      ),
+    );
+  }
 
+  void _confirmFactoryReset() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: const Text('Factory Reset All Data?'),
+        content: const Text(
+          'This will permanently delete all transactions and restore default budget categories.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              setState(() {
+                _categories = _getDefaultCategories();
+                _transactions = [];
+                _recurring = [];
+              });
+              _saveData();
+              _showSnack('All data reset to defaults.');
+            },
+            child: const Text('Reset Everything'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0F172A),
+        elevation: 0,
+        title: const Text(
+          'PocketLedger',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E293B),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFF334155)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.chevron_left, size: 20),
+                  onPressed: () => _shiftMonth(-1),
+                ),
+                Text(
+                  _formatYearMonthLabel(_activeYearMonth),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.chevron_right, size: 20),
+                  onPressed: () => _shiftMonth(1),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      body: IndexedStack(
+        index: _currentTabIndex,
+        children: [
+          _buildDashboardTab(),
+          _buildTransactionsTab(),
+          _buildCategoriesTab(),
+          _buildSettingsTab(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF3B82F6),
+        foregroundColor: Colors.white,
+        onPressed: () => _openTransactionModal(),
+        child: const Icon(Icons.add, size: 28),
+      ),
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: const Color(0xFF0F172A),
+        indicatorColor: const Color(0xFF1E293B),
+        selectedIndex: _currentTabIndex,
+        onDestinationSelected: (idx) => setState(() => _currentTabIndex = idx),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard, color: Color(0xFF3B82F6)),
+            label: 'Dashboard',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long, color: Color(0xFF3B82F6)),
+            label: 'History',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.pie_chart_outline),
+            selectedIcon: Icon(Icons.pie_chart, color: Color(0xFF3B82F6)),
+            label: 'Budgets',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings, color: Color(0xFF3B82F6)),
+            label: 'Data',
+          ),
+        ],
+      ),
+    );
+  }
+}
+// === END OF COMPLETE FILE ===
